@@ -1,0 +1,17 @@
+[package]
+name = "lb"
+version = "0.1.0"
+authors = ["Luiz Carvalho <luizcmpc@gmail.com>"]
+edition = "2021"
+
+[dependencies]
+config = { version = "0.13.3", default-features = false, features = ["toml"] }
+crossbeam-channel = "0.5.8"
+crossbeam-queue = "0.3.8"
+io-uring = "0.6.1"
+libc = "0.2.147"
+serde = { version = "1.0.186", features = ["derive"] }
+slab = "0.4.9"
+socket2 = "0.5.3"
+ureq = { version = "2.7.1", features = ["json"] }
+url = "2.4.0"

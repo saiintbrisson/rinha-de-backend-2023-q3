@@ -1,0 +1,17 @@
+# [[servers]]
+# name = "example"
+# bind = "0.0.0.0:10000"
+# strategy = "round-robin"
+# targets = [
+#     "api-1:80",
+#     "api-2:80",
+#     { address = "api-3:80", keep-alive = 1000 },
+#     { address = "api-4:80", domain-ttl = 0 },
+# ]
+
+[[servers]]
+name = "api"
+bind = "0.0.0.0:9999"
+strategy = "round-robin"
+# targets = ["api-1:80", "api-2:80"]
+targets = ["localhost:8081"]

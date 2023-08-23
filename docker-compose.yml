@@ -1,0 +1,76 @@
+version: "3.5"
+services:
+  postgres:
+    image: postgres:15
+    hostname: postgres
+    environment:
+      - POSTGRES_USER=rinha
+      - POSTGRES_PASSWORD=secret
+    ports: [5432:5432]
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/ddl.sql
+    deploy:
+      resources:
+        limits:
+          cpus: "0.8"
+          memory: 1GB
+
+  api-1:
+    image: saiintbrisson/rinha-de-backend-2023-q3:v1.0
+    hostname: api-1
+    depends_on: [postgres]
+    environment:
+      - PG_ADDRESS=postgres://rinha:secret@postgres:5432?options=-c%20synchronous_commit%3Doff
+      - SERVER_NAME=api-1
+    expose: [80]
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 0.4GB
+
+  api-2:
+    image: saiintbrisson/rinha-de-backend-2023-q3:v1.0
+    hostname: api-2
+    depends_on: [postgres]
+    environment:
+      - PG_ADDRESS=postgres://rinha:secret@postgres:5432?options=-c%20synchronous_commit%3Doff
+      - SERVER_NAME=api-2
+    expose: [80]
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 0.4GB
+
+  # nginx:
+  #   image: nginx:latest
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  #   depends_on:
+  #     - api-1
+  #     - api-2
+  #   ports: [9999:9999]
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "0.2"
+  #         memory: 0.5GB
+  lb:
+    image: loadbalancer
+    volumes:
+      - ./config.toml:/config.toml
+    depends_on:
+      - api-1
+      - api-2
+    ports: [9999:9999]
+    deploy:
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 0.1GB
+
+networks:
+  default:
+    driver: bridge
+    name: rinha
